@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>CryptoFolio Dashboard</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js" defer> </script>
+
+  <link rel="stylesheet" href="style.css" />
+
+</head>
+
+<body>
+  <div class="app">
+    <aside>
+      <h1>CryptoFolio</h1>
+      <nav>
+        <button class="active" onclick="show('dashboard')"><i class="fa fa-chart-line"></i> Dashboard</button>
+        <button onclick="show('assets')"><i class="fa fa-coins"></i> Assets</button>
+        <button onclick="show('portfolios')"><i class="fa fa-wallet"></i> Portfolios</button>
+      </nav>
+    </aside>
+
+    <main>
+      <section id="dashboard" class="active">
+        <h2>Dashboard</h2>
+        <div class="cards">
+          <div class="card">
+            <h3>Total Assets</h3>
+            <p id="kpiAssets">0</p>
+          </div>
+          <div class="card">
+            <h3>Total Portfolios</h3>
+            <p id="kpiPortfolios">0</p>
+          </div>
+          <div class="card">
+            <h3>Total Value</h3>
+            <p id="kpiValue">$0</p>
+          </div>
+          <div class="card">
+            <h3>BTC Price</h3>
+            <p id="btcPrice">–</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:30px">
+          <canvas id="chart"></canvas>
+          <canvas id="assetChart"></canvas>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+</body>
+
+</html>
