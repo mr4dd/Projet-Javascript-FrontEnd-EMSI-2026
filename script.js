@@ -10,6 +10,67 @@ const COIN_BY_SYMBOL = {
   SOL: "solana"
 };
 
+let editingAssetId = null;
+
+let assets = JSON.parse(localStorage.getItem("assets") || "[]");
+let portfolios = JSON.parse(localStorage.getItem("portfolios") || "[]");
+
+function addPortfolio(e) {
+  e.preventDefault();
+  portfolios.push({ id: Date.now(), name: pName.value });
+  localStorage.setItem("portfolios", JSON.stringify(portfolios));
+  e.target.reset();
+  renderAll();
+}
+function deletePortfolio(id) {
+  assets = assets.map(a => a.portfolio === id ? { ...a, portfolio: null } : a);
+  portfolios = portfolios.filter(p => p.id !== id);
+  localStorage.setItem("portfolios", JSON.stringify(portfolios));
+  localStorage.setItem("assets", JSON.stringify(assets));
+  renderAll();
+}
+
+function addAsset(e) {
+  e.preventDefault();
+
+  if (editingAssetId) {
+    const asset = assets.find(a => a.id === editingAssetId);
+    asset.name = aName.value;
+    asset.qty = +aQty.value;
+    asset.price = +aPrice.value;
+    asset.portfolio = +aPortfolio.value;
+    editingAssetId = null;
+  } else {
+    assets.push({
+      id: Date.now(),
+      name: aName.value,
+      qty: +aQty.value,
+      price: +aPrice.value,
+      portfolio: +aPortfolio.value
+    });
+  }
+
+  localStorage.setItem("assets", JSON.stringify(assets));
+  e.target.reset();
+  renderAll();
+}
+function deleteAsset(id) {
+  assets = assets.filter(a => a.id !== id);
+  localStorage.setItem("assets", JSON.stringify(assets));
+  renderAll();
+}
+function editAsset(id) {
+  const asset = assets.find(a => a.id === id);
+  if (!asset) return;
+
+  editingAssetId = id;
+
+  aName.value = asset.name;
+  aQty.value = asset.qty;
+  aPrice.value = asset.price;
+  aPortfolio.value = asset.portfolio;
+}
+
 function show(id) {
   document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
   document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
