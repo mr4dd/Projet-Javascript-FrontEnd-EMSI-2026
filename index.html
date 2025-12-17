@@ -75,6 +75,26 @@
           <tbody id="assetTable"></tbody>
         </table>
       </section>
+      <section id="portfolios">
+        <h2>Portfolios</h2>
+        <form onsubmit="addPortfolio(event)">
+          <input id="pName" placeholder="Portfolio name" required>
+          <button class="primary">Create</button>
+        </form>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Assets</th>
+              <th>Total Value</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="portfolioTable"></tbody>
+        </table>
+      </section>
+
     </main>
   </div>
 
