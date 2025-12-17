@@ -51,7 +51,30 @@
           <canvas id="assetChart"></canvas>
         </div>
       </section>
+      <section id="assets">
+        <h2>Crypto Assets</h2>
+        <form onsubmit="addAsset(event)">
+          <input id="aName" placeholder="Name (BTC)" required>
+          <input id="aQty" type="number" step="0.0001" placeholder="Quantity" required>
+          <input id="aPrice" type="number" step="0.01" placeholder="Buy Price $" required>
+          <select id="aPortfolio"></select>
+          <button class="primary">Add</button>
+        </form>
 
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Value</th>
+              <th>Portfolio</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="assetTable"></tbody>
+        </table>
+      </section>
     </main>
   </div>
 
