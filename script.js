@@ -92,3 +92,136 @@ async function checkAndPopulate() {
 
 assetName.addEventListener("input", async () => { await checkAndPopulate() });
 
+function renderAll() {
+  aPortfolio.innerHTML = portfolios.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+
+  assetTable.innerHTML = "";
+  assets.forEach(a => {
+    const p = portfolios.find(p => p.id === a.portfolio);
+    assetTable.innerHTML += `
+    <tr>
+      <td>${a.name}</td>
+      <td>${a.qty}</td>
+      <td>$${a.price}</td>
+      <td>$${(a.qty * a.price).toFixed(2)}</td>
+      <td><span class="badge">${p ? p.name : "-"}</span></td>
+      <td>  <button class="edit" onclick="editAsset(${a.id})">Edit</button> </td>
+      <td><button class="danger" onclick="deleteAsset(${a.id})">X</button></td>
+    </tr>`;
+  });
+
+  portfolioTable.innerHTML = "";
+  portfolios.forEach(p => {
+    const pa = assets.filter(a => a.portfolio === p.id);
+    const value = pa.reduce((s, a) => s + a.qty * a.price, 0);
+    portfolioTable.innerHTML += `
+    <tr>
+      <td>${p.name}</td>
+      <td>${pa.length}</td>
+      <td>$${value.toFixed(2)}</td>
+      <td><button class="danger" onclick="deletePortfolio(${p.id})">X</button></td>
+    </tr>`;
+  });
+
+  updateDashboard();
+}
+
+async function loadBTC() {
+  const r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
+  btcPrice.textContent = "$" + (await r.json()).bitcoin.usd;
+}
+
+function initChart() {
+  const ctx = document.getElementById("chart");
+  chart = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: [],
+      datasets: [{
+        data: [],
+        backgroundColor: [
+          "#22c55e", "#38bdf8", "#a855f7",
+          "#f59e0b", "#ef4444", "#14b8a6"
+        ]
+      }]
+    }
+  });
+}
+
+function initAssetChart() {
+  const ctx = document.getElementById("assetChart");
+  assetChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: [],
+      datasets: [{
+        label: "Asset Value ($)",
+        data: [],
+        backgroundColor: "#38bdf8"
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+
+function updateDashboard() {
+  kpiAssets.textContent = assets.length;
+  kpiPortfolios.textContent = portfolios.length;
+  kpiValue.textContent = "$" + assets.reduce((s, a) => s + a.qty * a.price, 0).toFixed(2);
+
+  const grouped = {};
+  assets.forEach(a => {
+    const p = portfolios.find(p => p.id === a.portfolio);
+    if (!p) return;
+    grouped[p.name] = (grouped[p.name] || 0) + (a.qty * a.price);
+  });
+
+  chart.data.labels = Object.keys(grouped);
+  chart.data.datasets[0].data = Object.values(grouped);
+  chart.update();
+  const byAsset = {};
+  assets.forEach(a => {
+    byAsset[a.name] = (byAsset[a.name] || 0) + (a.qty * a.price);
+  });
+
+  assetChart.data.labels = Object.keys(byAsset);
+  assetChart.data.datasets[0].data = Object.values(byAsset);
+  assetChart.update();
+}
+
+function search(e) {
+  e.preventDefault();
+  const searchVal = document.querySelector("#aSearch").value.toLowerCase();
+  if (searchVal != "") {
+    const folioIndex = portfolios.findIndex(a => a.name.toLowerCase() === searchVal);
+    const folioId = folioIndex !== -1 ? portfolios[folioIndex].id : null;
+    assetTable.innerHTML = "";
+    assets.forEach(v => {
+      if (v.name.toLowerCase() == searchVal || v.portfolio == folioId) {
+        const p = portfolios[portfolios.findIndex(a => a.id == v.portfolio)].name;
+        assetTable.innerHTML += `
+          <tr>
+            <td>${v.name}</td>
+            <td>${v.qty}</td>
+            <td>$${v.price}</td>
+            <td>$${(v.qty * v.price).toFixed(2)}</td>
+            <td><span class="badge">${p ? p : "-"}</span></td>
+            <td>  <button class="edit" onclick="editAsset(${v.id})">Edit</button> </td>
+            <td><button class="danger" onclick="deleteAsset(${v.id})">X</button></td>
+          </tr>`;
+      }
+    });
+  } else {
+    renderAll();
+  }
+}
+
+initChart();
+initAssetChart();
+renderAll();
+loadBTC();
