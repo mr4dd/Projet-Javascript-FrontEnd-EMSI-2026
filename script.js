@@ -138,6 +138,7 @@ function initChart() {
     data: {
       labels: [],
       datasets: [{
+        label: "%",
         data: [],
         backgroundColor: [
           "#22c55e", "#38bdf8", "#a855f7",
@@ -172,7 +173,9 @@ function initAssetChart() {
 function updateDashboard() {
   kpiAssets.textContent = assets.length;
   kpiPortfolios.textContent = portfolios.length;
-  kpiValue.textContent = "$" + assets.reduce((s, a) => s + a.qty * a.price, 0).toFixed(2);
+  
+  const totalValue = assets.reduce((s, a) => s + a.qty * a.price, 0);
+  kpiValue.textContent = "$" + totalValue.toFixed(2);
 
   const grouped = {};
   assets.forEach(a => {
@@ -182,8 +185,11 @@ function updateDashboard() {
   });
 
   chart.data.labels = Object.keys(grouped);
-  chart.data.datasets[0].data = Object.values(grouped);
+  chart.data.datasets[0].data = Object.values(grouped).map(value => {
+    return totalValue > 0 ? ((value / totalValue) * 100).toFixed(2) : 0;
+  });
   chart.update();
+
   const byAsset = {};
   assets.forEach(a => {
     byAsset[a.name] = (byAsset[a.name] || 0) + (a.qty * a.price);
