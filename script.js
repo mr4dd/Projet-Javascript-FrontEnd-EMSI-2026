@@ -23,11 +23,14 @@ function addPortfolio(e) {
   renderAll();
 }
 function deletePortfolio(id) {
-  assets = assets.map(a => a.portfolio === id ? { ...a, portfolio: null } : a);
-  portfolios = portfolios.filter(p => p.id !== id);
-  localStorage.setItem("portfolios", JSON.stringify(portfolios));
-  localStorage.setItem("assets", JSON.stringify(assets));
-  renderAll();
+  const confirmed = confirm("voulez vous vraiment supprimer cet objet?");
+  if (confirmed) {
+    assets = assets.map(a => a.portfolio === id ? { ...a, portfolio: null } : a);
+    portfolios = portfolios.filter(p => p.id !== id);
+    localStorage.setItem("portfolios", JSON.stringify(portfolios));
+    localStorage.setItem("assets", JSON.stringify(assets));
+    renderAll();
+  }
 }
 
 function addAsset(e) {
@@ -55,9 +58,12 @@ function addAsset(e) {
   renderAll();
 }
 function deleteAsset(id) {
-  assets = assets.filter(a => a.id !== id);
-  localStorage.setItem("assets", JSON.stringify(assets));
-  renderAll();
+  const confirmed = confirm("voulez vous vraiment supprimer cet objet?");
+  if (confirmed) {
+    assets = assets.filter(a => a.id !== id);
+    localStorage.setItem("assets", JSON.stringify(assets));
+    renderAll();
+  }
 }
 function editAsset(id) {
   const asset = assets.find(a => a.id === id);
