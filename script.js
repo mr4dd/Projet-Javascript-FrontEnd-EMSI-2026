@@ -126,6 +126,16 @@ function renderAll() {
   updateDashboard();
 }
 
+function sortAll() {
+  assetTable.innerHTML = "";
+  assets.sort((a, b) => a.name.localeCompare(b.name));
+  renderAll();
+}
+
+document.querySelector(".sortButton").addEventListener("click", () => {
+  sortAll();
+});
+
 async function loadBTC() {
   const r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
   btcPrice.textContent = "$" + (await r.json()).bitcoin.usd;
@@ -173,7 +183,7 @@ function initAssetChart() {
 function updateDashboard() {
   kpiAssets.textContent = assets.length;
   kpiPortfolios.textContent = portfolios.length;
-  
+
   const totalValue = assets.reduce((s, a) => s + a.qty * a.price, 0);
   kpiValue.textContent = "$" + totalValue.toFixed(2);
 
