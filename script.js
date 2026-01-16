@@ -112,6 +112,7 @@ function renderAll() {
       <td>$${(a.qty * a.price).toFixed(2)}</td>
       <td><span class="badge">${p ? p.name : "-"}</span></td>
       <td>  <button class="edit" onclick="editAsset(${a.id})">Edit</button> </td>
+      <td> <button class="details" onclick="showDetails(${a.id})">details</button></td> 
       <td><button class="danger" onclick="deleteAsset(${a.id})">X</button></td>
     </tr>`;
   });
@@ -130,6 +131,22 @@ function renderAll() {
   });
 
   updateDashboard();
+}
+
+function showDetails(id) {
+  const a = assets.find(a => a.id == id);
+  const p = portfolios.filter(p => p.id == a.portfolio);
+  console.log(p);
+  assetTable.innerHTML = `
+  <div class="detailedView">
+    <tr>
+      <td>${a.name}</td>
+      <td>${a.qty}</td>
+      <td>$${a.price}</td>
+      <td>$${(a.qty * a.price).toFixed(2)}</td>
+      <td><span class="badge">${p ? p[0].name : "-"}</span></td>
+  </div>
+  `;
 }
 
 function sortAll() {
